@@ -20,4 +20,10 @@ ylims <- c(0,10)
 source("code/func.R")
 source("code/load.R")
 source("code/clean.R")
+
+# Do some EDA, especially test the sampling from the binomial
+# distribution idea
+# NOT RUN source("code/EDA_RossRiverRates.R")
+
+# Do the RRv rates figures for paper
 source("code/do_plots_RossRiverRates.R")
