@@ -2,7 +2,7 @@
 
 This is the documenation of code and data prepared for the paper 'Vally, H, Peel, M, Dowse, G, Cameron, S, Codde, J, Hanigan, IC, Lindsay, M. (2012). Use of Geographic Information Systems to Describe the Relationship between the Risk of Ross River Virus Infection and Proximity to the Leschenault Estuary in the South-West of Western Australia. Aust New Zealand J Pub Health'. 
 
-The publication of this code makes the analytic code that produced the results accessible by the research community. The analytic data are available on request, and subject to review by the Western Australian government human research ethics committee.
+The publication of this analytic code makes the analysis more transparent and accessible by the research community. The analytic data are available on request, and subject to review by the Western Australian government human research ethics committee.
 
 This work is licensed under Creative Commons - Attribution 4.0.
 [http://creativecommons.org/licenses/by/4.0/](http://creativecommons.org/licenses/by/4.0/).
