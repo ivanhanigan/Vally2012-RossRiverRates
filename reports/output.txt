@@ -1,0 +1,50 @@
+###### EASTERN
+
+Call:
+glm(formula = cases ~ buffer + offset(log(pops)), family = "poisson", 
+    data = d_eastern)
+
+Deviance Residuals: 
+     Min        1Q    Median        3Q       Max  
+-1.56363  -0.95170  -0.35627  -0.00133   2.40448  
+
+Coefficients:
+            Estimate Std. Error z value Pr(>|z|)    
+(Intercept)  -4.8244     0.1445 -33.384  < 2e-16 ***
+buffer       -0.2465     0.0792  -3.112  0.00186 ** 
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+(Dispersion parameter for poisson family taken to be 1)
+
+    Null deviance: 29.573  on 14  degrees of freedom
+Residual deviance: 16.711  on 13  degrees of freedom
+AIC: 53.773
+
+Number of Fisher Scoring iterations: 5
+
+###### URBAN EXCLUDING ZERO POPULATION BUFFER 0.5
+
+Call:
+glm(formula = cases ~ buffer + offset(log(pops)), family = "poisson", 
+    data = d_urban)
+
+Deviance Residuals: 
+    Min       1Q   Median       3Q      Max  
+-1.5027  -0.9427  -0.1652   0.5483   1.7231  
+
+Coefficients:
+            Estimate Std. Error z value Pr(>|z|)    
+(Intercept) -5.51144    0.33456 -16.474   <2e-16 ***
+buffer       0.03644    0.06373   0.572    0.567    
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+(Dispersion parameter for poisson family taken to be 1)
+
+    Null deviance: 12.943  on 11  degrees of freedom
+Residual deviance: 12.615  on 10  degrees of freedom
+AIC: 63.745
+
+Number of Fisher Scoring iterations: 4
+

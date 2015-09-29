@@ -11,14 +11,13 @@ setwd("~/projects/Vally2012-RossRiverRates")
 
 ### Set any global variables here
 ####################
-
-
+ylims <- c(0,10)
 
 ####################
 
 
 ### Run the code
+source("code/func.R")
 source("code/load.R")
 source("code/clean.R")
-source("code/func.R")
-source("code/do.R")
+source("code/do_plots_RossRiverRates.R")
