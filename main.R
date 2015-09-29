@@ -1,5 +1,5 @@
 # Project: Vally2012-RossRiverRates
-# Author: Hanigan, Ivan Charles
+# Author: Hanigan, Ivan
 # Maintainer: <ivan.hanigan@gmail.com>
 
 # This is the main file for the project
@@ -23,7 +23,8 @@ source("code/clean.R")
 
 # Do some EDA, especially test the sampling from the binomial
 # distribution idea
-# NOT RUN source("code/EDA_RossRiverRates.R")
+# NOT RUN, do this manually
+# source("code/EDA_RossRiverRates.R")
 
 # Do the RRv rates figures for paper
 source("code/do_plots_RossRiverRates.R")

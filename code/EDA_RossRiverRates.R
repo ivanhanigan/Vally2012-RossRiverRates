@@ -25,10 +25,17 @@ summary(fit)
 # try some alternatives
 require(splines)
 require(mgcv)
-fit1 <- glm(cases~ ns(buffer,df=3) + offset(1+log(pops)),family='poisson', data=d_urban)
-fit2 <- gam(cases~ s(buffer) + offset(log(1+pops)),family='poisson', data=d_urban)
+# Exclude row with zero pop
+d_urban2 <- d_urban[-1,]
+fit1 <- glm(cases~ ns(buffer,df=3) + offset(log(pops)),family='poisson', data=d_urban2)
+summary(fit1)
+termplot(fit1, se = T)
+dev.off()
+fit2 <- gam(cases~ s(buffer) + offset(log(pops)),family='poisson', data=d_urban2)
 summary(fit2)
 plot(fit2)
+dev.off()
+# Looks like nothing going on in Urban
 
 #### Try sampling from the binomial
 "Description
@@ -132,11 +139,16 @@ out=matrix(nrow=0,ncol=4)
 # Do this with a manual loop, set d to the appropriate input and then repeat
 par(mfrow=c(2,1))
 # start second time here, change d
-#d=d_eastern
-d=d_urban
 # and set up a title as appropriate
-#title_label <- "eastern"
+for(i in 1:2){
+if(i == 1){
+d=d_eastern
+title_label <- "eastern"
+} else {
+d=d_urban
 title_label <- "urban"
+}
+
 names(d)=c('buffer','cases','pops','rate')
 
 # create an empty matrix to recieve the estimated counts for each buffer
@@ -150,7 +162,7 @@ for(i in 1:15){
                         rbinom(n=1000,size=d[i,'pops'],prob=d[i,'cases']/d[i,'pops']), # the random number generator is given the required n, sample size (pop) and probability (rate)
                         d[i,'pops'])) # when we finish we want to display the counts as a rate so need the denominator
 
-#               # step 2 calculate the two tailed lower and upper 95% expected counts of ross river virus given the specified probability and sample size
+#               # NOT RUN step 2 calculate the two tailed lower and upper 95% expected counts of ross river virus given the specified probability and sample size
 #               ci=rbind(ci,cbind(d[i,'buffer'],
 #                       qbinom(p=0.025,size=d[i,'pop'],prob=d[i,'cases']/d[i,'pop']), # qbinom is the quantile function for the binomial distribution
 #                       qbinom(p=0.975,size=d[i,'pop'],prob=d[i,'cases']/d[i,'pop']),
@@ -205,10 +217,10 @@ title(title_label)
 output=as.data.frame(output, row.names = F)
 names(output)=c('buffer','50pct','5pct','95pct')
 output
+# NOT RUN
 #write.csv(output,'eastern.csv',row.names=F)
 #write.csv(output,'urban.csv',row.names=F)
-
-
+}
 # manual loop ends here, repeat with other group
 #############################################################
 savePlot('reports/simulated.png')
