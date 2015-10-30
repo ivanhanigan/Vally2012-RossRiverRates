@@ -8,6 +8,13 @@ d_eastern
 
 fit <- glm(cases~ buffer + offset(log(pops)),family='poisson', data=d_eastern )
 summa <- summary(fit)
+summa
+## Coefficients:
+##             Estimate Std. Error z value Pr(>|z|)
+## (Intercept)  -4.8244     0.1445 -33.384  < 2e-16 ***
+## buffer       -0.2465     0.0792  -3.112  0.00186 **
+## ---
+
 exp(-0.2465)-1
 #= -0.2184686
 exp(-0.2465-1.96*0.0792)-1
@@ -52,7 +59,14 @@ dev.off()
 #################################################################################
 d_urban
 
-#exclude zero pop
+fit <- glm(cases~ buffer + offset(log(1+pops)),family='poisson', data=d_urban )
+summa <- summary(fit)
+summa$coeff
+##               Estimate Std. Error     z value     Pr(>|z|)
+## (Intercept) -5.5236291 0.33353693 -16.5607719 1.338655e-61
+## buffer       0.0385268 0.06351951   0.6065349 5.441596e-01
+
+# decided to exclude zero pop
 d_urban <- d_urban[-1,]
 d_urban
 
