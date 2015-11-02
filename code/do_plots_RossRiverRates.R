@@ -67,10 +67,10 @@ summa$coeff
 ## buffer       0.0385268 0.06351951   0.6065349 5.441596e-01
 
 # decided to exclude zero pop
-d_urban <- d_urban[-1,]
-d_urban
+d_urban2 <- d_urban[-1,]
+d_urban2
 
-fit <- glm(cases~ buffer + offset(log(pops)),family='poisson', data=d_urban )
+fit <- glm(cases~ buffer + offset(log(pops)),family='poisson', data=d_urban2 )
 
 write.table('###### URBAN EXCLUDING ZERO POPULATION BUFFER 0.5','reports/output.txt',row.names=F,col.names=F,quote=F,append=T)
 sink('reports/output.txt',append=T)
@@ -79,13 +79,13 @@ sink()
 
 par(mar=c(4,4,1.75,1))
 
-plot(c(0.5,d_urban$buffer),c(NA,(d_urban$cases/d_urban$pops)*1000),type='b',ylim=ylims, xlim = c(0,7.5),ylab='Incidence Rate per 1000',xlab='Buffer (Kilometres)')
+plot(c(0.5,d_urban2$buffer),c(NA,(d_urban2$cases/d_urban2$pops)*1000),type='b',ylim=ylims, xlim = c(0,7.5),ylab='Incidence Rate per 1000',xlab='Buffer (Kilometres)')
 
-lines(d_urban$buffer,(predict(fit,type='response')/d_urban$pops)*1000,lwd=2)
+lines(d_urban2$buffer,(predict(fit,type='response')/d_urban2$pops)*1000,lwd=2)
 
 pred1  <-  predict(fit,type='link',se.fit=T)
 
-with(d_urban,
+with(d_urban2,
      with(pred1,
           matlines(buffer,
                    cbind(
