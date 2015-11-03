@@ -14,9 +14,13 @@ summa
 ## (Intercept) -4.82425    0.14451 -33.382  < 2e-16 ***
 ## buffer      -0.24702    0.07921  -3.119  0.00182 **
 
-# model 1 effect in urban
-fit1 <- glm(cases~ buffer + offset(log(1+pops)),family='poisson', data=d_urban )
-summa <- summary(fit1)
+# model 1 effect in urban with dropped zero pop zone
+d_urban2 <- d_urban[-1,]
+fit1 <- glm(cases~ buffer + offset(log(pops)),family='poisson', data=d_urban2 )
+summary(fit1)
+# now  without dropping the empty pop
+fit1.1 <- glm(cases~ buffer + offset(log(1+pops)),family='poisson', data=d_urban )
+summa <- summary(fit1.1)
 summa
 ## Coefficients:
 ##             Estimate Std. Error z value Pr(>|z|)

@@ -11,5 +11,19 @@ This is a report of the model checking performed for the paper:  Vally, H., Peel
 
 ```{r, echo = FALSE, results = 'hide'}
 source("main.R")
-# this just re-ran the main analysis
+# this just re-ran all the analysis
+# the alternate models are in the do_model_checking.R file
+# for the report we need xtable
+library(xtable)
+```  
+
+# The issues
+
+- In original modelling I chose to drop a buffer in the urban zone that had zero population
+- This could have been dealt with by adding one to the `offset(log(pop))`
+- The difference in the two models is shown:
+
+```{r, results = 'asis}
+print(xtable(fit1), type = 'html')
+print(xtable(fit1.1), type = 'html')
 ```

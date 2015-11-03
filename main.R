@@ -18,9 +18,9 @@ ylims <- c(0,10)
 
 ### Run the code
 source("code/func.R")
-# data provided needed cleaning once only
-source("code/load1.R")
-source("code/clean1.R")
+# data provided needed cleaning once only, also I am not sharing the entire original file on github
+#source("code/load1.R")
+#source("code/clean1.R")
 # load data derived 
 source("code/load.R")
 # no more cleaning done
@@ -33,5 +33,5 @@ source("code/load.R")
 # Do the RRv rates figures for paper
 source("code/do_plots_RossRiverRates.R")
 
-# Do the model checking all at once, or alternately do this for the report
-#source("code/do_model_checking.R")
+# Do the model checking 
+source("code/do_model_checking.R")

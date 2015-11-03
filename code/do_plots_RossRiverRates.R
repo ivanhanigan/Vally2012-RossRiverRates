@@ -29,8 +29,8 @@ sink('reports/output.txt',append=T)
 print(summary(fit))
 sink()
 
+png('reports/Eastern.png')
 par(mar=c(4,4,1.75,1))
-
 plot(d_eastern$buffer,(d_eastern$cases/d_eastern$pops)*1000,type='b',ylim=ylims,ylab='Incidence Rate per 1000',xlab='Buffer (Kilometres)')
 
 lines(d_eastern$buffer,(predict(fit,type='response')/d_eastern$pops)*1000,lwd=2)
@@ -51,9 +51,6 @@ with(d_eastern,
       )
 
 legend('topright',c('Data','Model fit','95% CI'),lty=c(1,1,2),pch=c(1,NA,NA),lwd=c(1,2,1))
-
-
-savePlot('reports/Eastern.jpg',type=c('jpeg'))
 dev.off()
 
 
@@ -67,7 +64,7 @@ summa$coeff
 ## (Intercept) -5.5236291 0.33353693 -16.5607719 1.338655e-61
 ## buffer       0.0385268 0.06351951   0.6065349 5.441596e-01
 
-# decided to exclude zero pop
+# decided to exclude zero pop from urban
 d_urban2 <- d_urban[-1,]
 d_urban2
 
@@ -78,8 +75,8 @@ sink('reports/output.txt',append=T)
 print(summary(fit))
 sink()
 
+png('reports/Urban.png')
 par(mar=c(4,4,1.75,1))
-
 plot(c(0.5,d_urban2$buffer),c(NA,(d_urban2$cases/d_urban2$pops)*1000),type='b',ylim=ylims, xlim = c(0,7.5),ylab='Incidence Rate per 1000',xlab='Buffer (Kilometres)')
 
 lines(d_urban2$buffer,(predict(fit,type='response')/d_urban2$pops)*1000,lwd=2)
@@ -98,7 +95,4 @@ with(d_urban2,
 )
 
 legend('topright',c('Data','Model fit','95% CI'),lty=c(1,1,2),pch=c(1,NA,NA),lwd=c(1,2,1))
-
-
-savePlot('reports/Urban.jpg',type=c('jpeg'))
 dev.off()
