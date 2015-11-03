@@ -15,7 +15,9 @@
 ** 2015-11-03 results from Ivan Re: use as a simple example
 - start a Rmarkdown report that shows what happens if you change a Decision
 - the decision was to remove first row in urban
-
+- no difference
+- there was also decision to model each zone seperated, the combined model was no different
+- combined data lets you use the AIC for model selection though
 * workflow
 ** COMMENT test-newnode
 
@@ -29,9 +31,10 @@
   Geocoding, private, shapefile, this was done by Mark Peel
   rates,     "shapefile, buffer", rates-ssheet, done by Mark 
   reshape long, rates-ssheet, "d_eastern, d_urban, dat2", dat2 is row binded to add urban and eastern to same table
-  model1, "d_eastern, d_urban", "fit, fit1, fit1.1", Note that I decided to exclude zero pop from urban (fit1) and did this again as fit1.1 to show difference
+  model1, "d_eastern, d_urban", "fit, fit1, fit1.1", Note that I decided to exclude zero pop from urban (fit1) and did this again as fit1.1 to show there is negligible difference
   model2 , dat2, fit2, "This uses a multiplicative term, the variance-covariance matrix is required for B3 and SE"
   model3, dat2, fit3, This is the re-parametrisation so that coeff and se are easier
+  AIC, "fit3, fit_no_buff", estat, delta aic was 9.291201
   '), stringsAsFactors = F, strip.white = T)
   ## #write.csv(steps, "workflow_steps.csv", row.names = F)
   ## steps <- read.csv("workflow_steps.csv", stringsAsFactors = F, strip.white = T)
@@ -50,14 +53,13 @@
   cat(nodes)
   sink()
   system("dot -Tpdf workflow_steps.dot -o workflow_steps.pdf")
-  #browseURL("workflow_steps.pdf")
+  browseURL("workflow_steps.pdf")
   
   
 #+end_src
 
 #+RESULTS:
 : 0
-
 
 * main.R
 
@@ -587,6 +589,60 @@ dev.off()
   ## buffer_eastern -0.24702    0.07921  -3.119  0.00182 **
   ## urban          -0.69938    0.36350  -1.924  0.05435 .
   
+  
+#+end_src
+** COMMENT do_model_checking_plots
+#+name:do_model_checking_plots
+#+begin_src R :session *R* :tangle code/do_model_checking_plots.R :exports none :eval no :padline no
+  #### name:do_model_checking_plots ####
+  # with multiplicative model we can use the predict function and 
+  # plotting the slopes and se are easy
+  summary(fit2)
+  dat2$pred <-  predict(fit2, type='response')
+  dat2
+  plot(
+    dat2$buffer,
+    (dat2$cases/dat2$pops)*1000,
+    type='p',ylim=ylims, xlim = c(0,7.5), ylab='Incidence Rate per 1000',xlab='Buffer (Kilometres)',
+    col = dat2$urban + 1, pch = 16
+    )
+  legend("topright", legend = c("Eastern", "Urban"), pch = 16, col = c("black", "red"))
+  lines(dat2$buffer,(dat2$pred/dat2$pops)*1000,lwd=2)
+  se <- predict(fit2, type = "response", se = T)
+  dat2$se <- se$se.fit
+  dat2
+  par(mfrow=c(2,1))
+  for(class_i in c(0,1)){
+  #class_i <- 1
+  with(dat2[dat2$urban == class_i,],
+       plot(buffer, (cases/pops) * 1000, ylim = ylims)
+       )
+  with(dat2[dat2$urban == class_i,],
+       lines(buffer, (pred/pops) * 1000)
+       )
+  with(dat2[dat2$urban == class_i,],
+       lines(buffer, ((pred + 1.96 * se)/pops) * 1000, lty = 2)
+       )
+  with(dat2[dat2$urban == class_i,],
+       lines(buffer, ((pred - 1.96 * se)/pops) * 1000, lty = 2)
+       )
+  }
+#+end_src
+
+** COMMENT AIC
+#+name:AIC
+#+begin_src R :session *R* :tangle code/do_AIC.R :exports none :eval no
+  #### name:AIC ####
+  # now one model without a buffer effect
+  fit_no_buff <- glm(cases ~ urban + offset(log(1+pops)), family = 'poisson', data = dat2)
+  summary(fit_no_buff)
+  estat <- data.frame(
+    model = c("no buffer", "buffer x urban interaction"),
+    aic = c(AIC(fit_no_buff),AIC(fit3))
+    )
+  estat$delta_aic <- estat$aic - min(estat$aic)
+  estat
+  # as we thought, it is a much better model
   
 #+end_src
 
