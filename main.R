@@ -19,8 +19,8 @@ ylims <- c(0,10)
 ### Run the code
 source("code/func.R")
 # data provided needed cleaning once only
-#source("code/load1.R")
-#source("code/clean1.R")
+source("code/load1.R")
+source("code/clean1.R")
 # load data derived 
 source("code/load.R")
 # no more cleaning done

@@ -2,3 +2,4 @@
 # Author: ivanhanigan
 # Maintainer: <ivan.hanigan@gmail.com>
 load(".RData")
+ls()
