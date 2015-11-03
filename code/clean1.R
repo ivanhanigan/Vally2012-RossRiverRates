@@ -1,6 +1,6 @@
 # Project: Vally2012-RossRiverRates
-# Author: Your Name
-# Maintainer: Who to complain to <yourfault@somewhere.net>
+# Author: ivanhanigan
+# Maintainer: <ivan.hanigan@gmail.com>
 
 # All the potentially messy data cleanup
 dat[,1:4]
@@ -20,3 +20,12 @@ names(d_eastern) <- c('buffer','cases','pops','rate')
 
 d_urban <- dat[1:15,c(1,8:10)]
 names(d_urban) <- c('buffer','cases','pops','rate')
+
+# combine the urban and rural data
+d_eastern$urban <- 0
+d_urban$urban <- 1
+dat2 <- rbind(d_eastern, d_urban)
+str(dat2)
+dat2
+
+save.image()

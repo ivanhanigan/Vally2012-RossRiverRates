@@ -1,10 +1,11 @@
+
 # aims
-## test the different parametrisations for the effect modification by urban
-## we show that the coeffs and se are equivalent but that the psuedo-R
-## squared will be better when including all our data in stratified analysis
+## test the different way to handle the missing population row, also
+## different parametrisations for the effect modification by urban
+## we show that the coeffs and se are equivalent 
 
 # model 0 effect in eastern
-d_eastern
+#d_eastern
 fit <- glm(cases~ buffer + offset(log(1+pops)),family='poisson', data=d_eastern )
 summa <- summary(fit)
 summa
@@ -22,12 +23,6 @@ summa
 ## (Intercept) -5.52363    0.33354 -16.561   <2e-16 ***
 ## buffer       0.03853    0.06352   0.607    0.544
 
-# step 1, combine the urban and rural data
-d_eastern$urban <- 0
-d_urban$urban <- 1
-dat2 <- rbind(d_eastern, d_urban)
-str(dat2)
-dat2
 
 # model 2 is a multiplicative term
 fit2 <- glm(cases ~ buffer * urban + offset(log(1+pops)), family = 'poisson', data = dat2)
@@ -47,9 +42,9 @@ b3 <- summa$coeff[4,1]
 b1 + b3
 # 0.0385268
 # but what about that p-value?  and the se?
-str(fit2)
+#str(fit2)
 fit2_vcov <- vcov(fit2)
-fit2_vcov
+#fit2_vcov
 # now calculate the conditional standard error for the marginal effect of buffer for the value of the modifying variable (Z, urban =1)
 varb1<-fit2_vcov[2,2]
 varb3<-fit2_vcov[4,4]

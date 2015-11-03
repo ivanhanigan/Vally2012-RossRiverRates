@@ -27,7 +27,7 @@ Number of Fisher Scoring iterations: 5
 
 Call:
 glm(formula = cases ~ buffer + offset(log(pops)), family = "poisson", 
-    data = d_urban)
+    data = d_urban2)
 
 Deviance Residuals: 
     Min       1Q   Median       3Q      Max  

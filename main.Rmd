@@ -1,0 +1,15 @@
+---
+title: "Untitled"
+author: "ivanhanigan"
+date: "3/11/2015"
+output: html_document
+---
+
+# Introduction 
+
+This is a report of the model checking performed for the paper:  Vally, H., Peel, M., Dowse, G. K., Cameron, S., Codde, J. P., Hanigan, I., \& Lindsay, M. D. a. (2012). Geographic information systems used to describe the link between the risk of Ross River virus infection and proximity to the Leschenault Estuary, WA. Australian and New Zealand Journal of Public Health, 36(3), 229–235. doi:10.1111/j.1753-6405.2012.00869.x
+
+```{r, echo = FALSE, results = 'hide'}
+source("main.R")
+# this just re-ran the main analysis
+```
