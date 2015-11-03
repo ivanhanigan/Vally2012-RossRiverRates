@@ -1,5 +1,5 @@
 ---
-title: "Untitled"
+title: "Ross River virus paper: model checking"
 author: "ivanhanigan"
 date: "3/11/2015"
 output: html_document
@@ -23,7 +23,12 @@ library(xtable)
 - This could have been dealt with by adding one to the `offset(log(pop))`
 - The difference in the two models is shown:
 
-```{r, results = 'asis}
+```{r, results = 'asis'}
+# the first time I dropped that row
+fit1$call
 print(xtable(fit1), type = 'html')
+
+# this time I have kept it
+fit1.1$call
 print(xtable(fit1.1), type = 'html')
 ```

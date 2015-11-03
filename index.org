@@ -593,37 +593,40 @@ dev.off()
 * report.Rmd
 #+name:main
 #+begin_src R :session *R* :tangle main.Rmd :exports none :eval no :padline no
-  ---
-  title: "Untitled"
-  author: "ivanhanigan"
-  date: "3/11/2015"
-  output: html_document
-  ---
-  
-  # Introduction 
-  
-  This is a report of the model checking performed for the paper:  Vally, H., Peel, M., Dowse, G. K., Cameron, S., Codde, J. P., Hanigan, I., \& Lindsay, M. D. a. (2012). Geographic information systems used to describe the link between the risk of Ross River virus infection and proximity to the Leschenault Estuary, WA. Australian and New Zealand Journal of Public Health, 36(3), 229–235. doi:10.1111/j.1753-6405.2012.00869.x
-  
-  ```{r, echo = FALSE, results = 'hide'}
-  source("main.R")
-  # this just re-ran all the analysis
-  # the alternate models are in the do_model_checking.R file
-  # for the report we need xtable
-  library(xtable)
-  ```  
-  
-  # The issues
-  
-  - In original modelling I chose to drop a buffer in the urban zone that had zero population
-  - This could have been dealt with by adding one to the `offset(log(pop))`
-  - The difference in the two models is shown:
-  
-  ```{r, results = 'asis}
-  print(xtable(fit1), type = 'html')
-  print(xtable(fit1.1), type = 'html')
-  ```
-  
-  
+---
+title: "Ross River virus paper: model checking"
+author: "ivanhanigan"
+date: "3/11/2015"
+output: html_document
+---
+
+# Introduction 
+
+This is a report of the model checking performed for the paper:  Vally, H., Peel, M., Dowse, G. K., Cameron, S., Codde, J. P., Hanigan, I., \& Lindsay, M. D. a. (2012). Geographic information systems used to describe the link between the risk of Ross River virus infection and proximity to the Leschenault Estuary, WA. Australian and New Zealand Journal of Public Health, 36(3), 229–235. doi:10.1111/j.1753-6405.2012.00869.x
+
+```{r, echo = FALSE, results = 'hide'}
+source("main.R")
+# this just re-ran all the analysis
+# the alternate models are in the do_model_checking.R file
+# for the report we need xtable
+library(xtable)
+```  
+
+# The issues
+
+- In original modelling I chose to drop a buffer in the urban zone that had zero population
+- This could have been dealt with by adding one to the `offset(log(pop))`
+- The difference in the two models is shown:
+
+```{r, results = 'asis'}
+# the first time I dropped that row
+fit1$call
+print(xtable(fit1), type = 'html')
+
+# this time I have kept it
+fit1.1$call
+print(xtable(fit1.1), type = 'html')
+```
   
 #+end_src
 
