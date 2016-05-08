@@ -2,7 +2,7 @@
 # aims
 ## test the different way to handle the missing population row, also
 ## different parametrisations for the effect modification by urban
-## we show that the coeffs and se are equivalent 
+## we show that the coeffs and se are equivalent
 
 # model 0 effect in eastern
 #d_eastern
@@ -73,3 +73,120 @@ summa
 ## buffer_urban    0.03853    0.06352   0.607  0.54416
 ## buffer_eastern -0.24702    0.07921  -3.119  0.00182 **
 ## urban          -0.69938    0.36350  -1.924  0.05435 .
+
+
+
+#########################
+# model 4 is multilevel
+library(lme4)
+str(dat2)
+dat2$urban <- factor(dat2$urban)
+# null model, grouping by urban but not fixed effects.
+Norm1 <-glmer(cases ~ 1 + (1|urban),
+              data=dat2,
+              family = 'poisson',
+              offset = log(1+pops)
+              )
+summary(Norm1)
+
+# Adding fixed-effects predictors
+# Predict cases from distance buffer
+
+Norm2 <-glmer(cases ~ buffer + (1|urban),
+             data=dat2,
+             family = 'poisson',
+             offset = log(1+pops)
+             )
+
+summary(Norm2)
+
+# Random slopes
+
+# Add a random effect of buffer as well. Now in addition to estimating the distribution of intercepts across urban/rual, we also estimate the distribution of the slope of distance.
+
+Norm3 <- glmer(cases ~ buffer + (buffer|urban),
+              data=dat2,
+              family = 'poisson',
+              offset = log(1+pops)
+              )
+# Warning message:
+#In checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv,  :
+#               Model failed to converge with max|grad| = 0.00123993 (tol = 0.001, component 1)
+summary(Norm3)
+coefficients(Norm3)
+
+pred1  <-  predict(Norm3,type='link')
+#se.fit <- sqrt(diag(vcov(mylm)))[2]
+fixef(Norm3)
+pred1 <- cbind(dat2, pred1)
+
+par(mar=c(4,4,1.75,1), mfrow = c(2,2))
+
+plot(c(0.5,d_urban2$buffer),c(NA,(d_urban2$cases/d_urban2$pops)*1000),type='b',ylim=ylims, xlim = c(0,7.5),ylab='Incidence Rate per 1000',xlab='Buffer (Kilometres)')
+
+lines(d_urban2$buffer,(predict(Norm3,type='response')[17:30]/d_urban2$pops)*1000,lwd=2)
+#
+# with(d_urban2,
+#      with(pred1[17:30, "pred1"],
+#           matlines(buffer,
+#                    cbind(
+#                      exp(fit-1.96*se.fit)/pops,
+#                      exp(fit+1.96*se.fit)/pops
+#                    )*1000,
+#                    lty=2,
+#                    col=1))
+# )
+# dev.off()
+
+
+fit <- glm(cases~ buffer + offset(log(pops)),family='poisson', data=d_urban2 )
+
+plot(c(0.5,d_urban2$buffer),c(NA,(d_urban2$cases/d_urban2$pops)*1000),type='b',ylim=ylims, xlim = c(0,7.5),ylab='Incidence Rate per 1000',xlab='Buffer (Kilometres)')
+
+lines(d_urban2$buffer,(predict(fit,type='response')/d_urban2$pops)*1000,lwd=2)
+
+pred1  <-  predict(fit,type='link',se.fit=T)
+
+with(d_urban2,
+     with(pred1,
+          matlines(buffer,
+                   cbind(
+                     exp(fit-1.96*se.fit)/pops,
+                     exp(fit+1.96*se.fit)/pops
+                   )*1000,
+                   lty=2,
+                   col=1))
+)
+
+
+
+####################################################3
+
+plot(d_eastern$buffer,(d_eastern$cases/d_eastern$pops)*1000,type='b',ylim=ylims,ylab='Incidence Rate per 1000',xlab='Buffer (Kilometres)')
+
+lines(d_eastern$buffer,(predict(Norm3,type='response')[1:15]/d_eastern$pops)*1000,lwd=2)
+
+
+fit <- glm(cases~ buffer + offset(log(pops)),family='poisson', data=d_eastern )
+plot(d_eastern$buffer,(d_eastern$cases/d_eastern$pops)*1000,type='b',ylim=ylims,ylab='Incidence Rate per 1000',xlab='Buffer (Kilometres)')
+
+lines(d_eastern$buffer,(predict(fit,type='response')/d_eastern$pops)*1000,lwd=2)
+
+pred1  <-  predict(fit,type='link',se.fit=T)
+
+#CIs = exp(pred1$fit-1.96*pred1$se.fit)
+
+with(d_eastern,
+     with(pred1,
+          matlines(buffer,
+                   cbind(
+                     exp(fit-1.96*se.fit)/pops,
+                     exp(fit+1.96*se.fit)/pops
+                   )*1000,
+                   lty=2,
+                   col=1))
+)
+
+
+
+#dev.off()

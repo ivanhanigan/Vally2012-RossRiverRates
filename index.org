@@ -18,6 +18,8 @@
 - no difference
 - there was also decision to model each zone seperated, the combined model was no different
 - combined data lets you use the AIC for model selection though
+** 2016-05-08 notes from ivan re using multilevel models
+- can use lme4 in do models check
 * workflow
 ** COMMENT test-newnode
 
