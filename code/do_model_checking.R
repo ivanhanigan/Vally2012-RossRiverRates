@@ -104,20 +104,44 @@ summary(Norm2)
 
 # Add a random effect of buffer as well. Now in addition to estimating the distribution of intercepts across urban/rual, we also estimate the distribution of the slope of distance.
 
-Norm3 <- glmer(cases ~ buffer + (buffer|urban),
+Norm3 <- glmer(cases ~ buffer + (1+buffer|urban) + offset(log(1+pops)),
               data=dat2,
-              family = 'poisson',
-              offset = log(1+pops)
+              family = 'poisson'
               )
 # Warning message:
 #In checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv,  :
 #               Model failed to converge with max|grad| = 0.00123993 (tol = 0.001, component 1)
+
+# diversion: try rstan
+library(rstanarm)
+str(dat2)
+Norm3stan <- stan_glmer(cases ~ buffer + (1+buffer|urban) + offset(log(1+pops)),
+               data=dat2,
+               family = 'poisson'
+              )
+# MCMC Warning messages:
+#   1: There were 102 divergent transitions after warmup. Increasing adapt_delta above 0.95 may help. 
+# 2: Examine the pairs() plot to diagnose sampling problems
+
+summary(Norm3stan)
+ranef(Norm3stan)
+fixef(Norm3stan)
+plot(Norm3stan)
+
+# back to glmer
 summary(Norm3)
 coefficients(Norm3)
+ranef(Norm3)
+fixef(Norm3)
+binturb0<-ranef(Norm3)[[1]][1,1]
+inturbmain <- fixef(Norm3)[1]
+exp(inturbmain)
+inturbmain + binturb0
+plot(Norm3)
 
+### Plot
 pred1  <-  predict(Norm3,type='link')
 #se.fit <- sqrt(diag(vcov(mylm)))[2]
-fixef(Norm3)
 pred1 <- cbind(dat2, pred1)
 
 par(mar=c(4,4,1.75,1), mfrow = c(2,2))
@@ -190,3 +214,4 @@ with(d_eastern,
 
 
 #dev.off()
+
