@@ -1,13 +1,13 @@
 // do check R against stata
 
-insheet using "~/projects/Vally2012-RossRiverRates/data/rrv_bunbury_urban_rural_combined.csv"	
+insheet using "~/projects/Vally2012-RossRiverRates/data/rrv_bunbury_urban_rural_combined.csv"   
 gen log1pop = log(1+pops)
 
 poisson cases i.urban##c.buffer, offset(log1pop) 
 
 meglm cases buffer , offset(log1pop) || urban:, family(poisson) link(log)
 
-
+/*
 Mixed-effects GLM                               Number of obs      =        30
 Family:                 Poisson
 Link:                       log
@@ -77,3 +77,4 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 Correlation of Fixed Effects:
        (Intr)
 buffer -0.827
+*/

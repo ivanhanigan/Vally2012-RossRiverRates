@@ -2,7 +2,7 @@
 # aims
 ## test the different way to handle the missing population row, also
 ## different parametrisations for the effect modification by urban
-## we show that the coeffs and se are equivalent 
+## we show that the coeffs and se are equivalent
 
 # model 0 effect in eastern
 #d_eastern
@@ -99,8 +99,36 @@ Norm2 <-glmer(cases ~ buffer + (1|urban),
              )
 
 summary(Norm2)
-fixef(Norm2)
-ranef(Norm2)
+"
+Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) ['glmerMod']
+ Family: poisson  ( log )
+Formula: cases ~ buffer + (1 | urban)
+   Data: dat2
+ Offset: log(1 + pops)
+
+     AIC      BIC   logLik deviance df.resid
+   125.3    129.5    -59.6    119.3       27
+
+Scaled residuals:
+    Min      1Q  Median      3Q     Max
+-1.5901 -0.8978 -0.4232  0.4132  2.2455
+
+Random effects:
+ Groups Name        Variance Std.Dev.
+ urban  (Intercept) 0        0
+Number of obs: 30, groups:  urban, 2
+
+Fixed effects:
+            Estimate Std. Error z value Pr(>|z|)
+(Intercept) -5.04800    0.12393  -40.73   <2e-16 ***
+buffer      -0.06625    0.03116   -2.13   0.0335 *
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Correlation of Fixed Effects:
+       (Intr)
+buffer -0.827
+"
 # Random slopes
 
 # Add a random effect of buffer as well. Now in addition to estimating the distribution of intercepts across urban/rual, we also estimate the distribution of the slope of distance.
@@ -121,7 +149,7 @@ Norm3stan <- stan_glmer(cases ~ buffer + (1+buffer|urban) + offset(log(1+pops)),
                family = 'poisson'
               )
 # MCMC Warning messages:
-#   1: There were 102 divergent transitions after warmup. Increasing adapt_delta above 0.95 may help. 
+#   1: There were 102 divergent transitions after warmup. Increasing adapt_delta above 0.95 may help.
 # 2: Examine the pairs() plot to diagnose sampling problems
 
 summary(Norm3stan)
@@ -131,9 +159,52 @@ plot(Norm3stan)
 
 # back to glmer
 summary(Norm3)
+"
+Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) ['glmerMod']
+ Family: poisson  ( log )
+Formula: cases ~ buffer + (1 + buffer | urban) + offset(log(1 + pops))
+   Data: dat2
+
+     AIC      BIC   logLik deviance df.resid
+   126.2    133.2    -58.1    116.2       25
+
+Scaled residuals:
+    Min      1Q  Median      3Q     Max
+-1.3871 -0.8250 -0.2713  0.1921  2.8870
+
+Random effects:
+ Groups Name        Variance Std.Dev. Corr
+ urban  (Intercept) 0.06377  0.2525
+        buffer      0.01234  0.1111   -1.00
+Number of obs: 30, groups:  urban, 2
+
+Fixed effects:
+            Estimate Std. Error z value Pr(>|z|)
+(Intercept) -5.12140    0.25074 -20.425   <2e-16 ***
+buffer      -0.09866    0.09257  -1.066    0.287
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Correlation of Fixed Effects:
+       (Intr)
+buffer -0.877
+convergence code: 0
+Model failed to converge with max|grad| = 0.00123993 (tol = 0.001, component 1)
+"
 coefficients(Norm3)
+"this is the estimates after the group-specific adjustments
+$urban
+  (Intercept)       buffer
+0   -4.889436 -0.200720602
+1   -5.357347  0.005151114
+"
+
 ranef(Norm3)
 fixef(Norm3)
+"fixed effects
+(Intercept)      buffer
+-5.12140301 -0.09865953
+"
 binturb0<-ranef(Norm3)[[1]][1,1]
 binturb1<-ranef(Norm3)[[1]][2,1]
 

@@ -729,9 +729,13 @@ dev.off()
   -5.12140301 -0.09865953
   "
   binturb0<-ranef(Norm3)[[1]][1,1]
+  binturb1<-ranef(Norm3)[[1]][2,1]
+  
   inturbmain <- fixef(Norm3)[1]
   exp(inturbmain)
   inturbmain + binturb0
+  inturbmain + binturb1
+  
   plot(Norm3)
   
   ### Plot
@@ -810,7 +814,6 @@ dev.off()
   
   #dev.off()
   
-  
 #+end_src
 ** COMMENT do_model_checking_plots
 #+name:do_model_checking_plots
@@ -868,7 +871,7 @@ dev.off()
 #+end_src
 
 ** COMMENT do_stata
-#+begin_src stata :session *stata* :tangle code/compare_stata.do :exports none :eval no :padline no
+#+begin_src stata :session *shell* :tangle code/compare_stata.do :exports none :eval no :padline no
   // do check R against stata
   
   insheet using "~/projects/Vally2012-RossRiverRates/data/rrv_bunbury_urban_rural_combined.csv"   
