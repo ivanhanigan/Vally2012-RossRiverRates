@@ -2,7 +2,7 @@
 # aims
 ## test the different way to handle the missing population row, also
 ## different parametrisations for the effect modification by urban
-## we show that the coeffs and se are equivalent
+## we show that the coeffs and se are equivalent 
 
 # model 0 effect in eastern
 #d_eastern
@@ -214,4 +214,3 @@ with(d_eastern,
 
 
 #dev.off()
-
