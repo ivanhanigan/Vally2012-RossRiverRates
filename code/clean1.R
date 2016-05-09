@@ -27,5 +27,5 @@ d_urban$urban <- 1
 dat2 <- rbind(d_eastern, d_urban)
 str(dat2)
 dat2
-
+write.csv(dat2, "data/rrv_bunbury_urban_rural_combined.csv", row.names = F)  
 save.image()

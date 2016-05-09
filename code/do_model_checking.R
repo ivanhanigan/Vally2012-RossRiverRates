@@ -99,7 +99,8 @@ Norm2 <-glmer(cases ~ buffer + (1|urban),
              )
 
 summary(Norm2)
-
+fixef(Norm2)
+ranef(Norm2)
 # Random slopes
 
 # Add a random effect of buffer as well. Now in addition to estimating the distribution of intercepts across urban/rual, we also estimate the distribution of the slope of distance.
@@ -134,9 +135,13 @@ coefficients(Norm3)
 ranef(Norm3)
 fixef(Norm3)
 binturb0<-ranef(Norm3)[[1]][1,1]
+binturb1<-ranef(Norm3)[[1]][2,1]
+
 inturbmain <- fixef(Norm3)[1]
 exp(inturbmain)
 inturbmain + binturb0
+inturbmain + binturb1
+
 plot(Norm3)
 
 ### Plot

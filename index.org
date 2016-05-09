@@ -157,7 +157,7 @@ str(dat)
   dat2 <- rbind(d_eastern, d_urban)
   str(dat2)
   dat2
-  
+  write.csv(dat2, "data/rrv_bunbury_urban_rural_combined.csv", row.names = F)  
   save.image()
 #+end_src
 * data derived, load cleaned
@@ -616,7 +616,36 @@ dev.off()
                )
   
   summary(Norm2)
+  "
+  Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) ['glmerMod']
+   Family: poisson  ( log )
+  Formula: cases ~ buffer + (1 | urban)
+     Data: dat2
+   Offset: log(1 + pops)
   
+       AIC      BIC   logLik deviance df.resid 
+     125.3    129.5    -59.6    119.3       27 
+  
+  Scaled residuals: 
+      Min      1Q  Median      3Q     Max 
+  -1.5901 -0.8978 -0.4232  0.4132  2.2455 
+  
+  Random effects:
+   Groups Name        Variance Std.Dev.
+   urban  (Intercept) 0        0       
+  Number of obs: 30, groups:  urban, 2
+  
+  Fixed effects:
+              Estimate Std. Error z value Pr(>|z|)    
+  (Intercept) -5.04800    0.12393  -40.73   <2e-16 ***
+  buffer      -0.06625    0.03116   -2.13   0.0335 *  
+  ---
+  Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+  
+  Correlation of Fixed Effects:
+         (Intr)
+  buffer -0.827
+  "
   # Random slopes
   
   # Add a random effect of buffer as well. Now in addition to estimating the distribution of intercepts across urban/rual, we also estimate the distribution of the slope of distance.
@@ -647,9 +676,58 @@ dev.off()
   
   # back to glmer
   summary(Norm3)
+  "
+  Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) ['glmerMod']
+   Family: poisson  ( log )
+  Formula: cases ~ buffer + (1 + buffer | urban) + offset(log(1 + pops))
+     Data: dat2
+  
+       AIC      BIC   logLik deviance df.resid 
+     126.2    133.2    -58.1    116.2       25 
+  
+  Scaled residuals: 
+      Min      1Q  Median      3Q     Max 
+  -1.3871 -0.8250 -0.2713  0.1921  2.8870 
+  
+  Random effects:
+   Groups Name        Variance Std.Dev. Corr 
+   urban  (Intercept) 0.06377  0.2525        
+          buffer      0.01234  0.1111   -1.00
+  Number of obs: 30, groups:  urban, 2
+  
+  Fixed effects:
+              Estimate Std. Error z value Pr(>|z|)    
+  (Intercept) -5.12140    0.25074 -20.425   <2e-16 ***
+  buffer      -0.09866    0.09257  -1.066    0.287    
+  ---
+  Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+  
+  Correlation of Fixed Effects:
+         (Intr)
+  buffer -0.877
+  convergence code: 0
+  Model failed to converge with max|grad| = 0.00123993 (tol = 0.001, component 1)
+  "
   coefficients(Norm3)
+  "this is the estimates after the group-specific adjustments
+  $urban
+    (Intercept)       buffer
+  0   -4.889436 -0.200720602
+  1   -5.357347  0.005151114
+  "
+  
   ranef(Norm3)
+  "this is the deviation from fixed effects
+  $urban
+    (Intercept)     buffer
+  0   0.2319673 -0.1020611
+  1  -0.2359437  0.1038106
+  "
   fixef(Norm3)
+  "fixed effects
+  (Intercept)      buffer 
+  -5.12140301 -0.09865953
+  "
   binturb0<-ranef(Norm3)[[1]][1,1]
   inturbmain <- fixef(Norm3)[1]
   exp(inturbmain)
@@ -789,6 +867,89 @@ dev.off()
   
 #+end_src
 
+** COMMENT do_stata
+#+begin_src stata :session *stata* :tangle code/compare_stata.do :exports none :eval no :padline no
+  // do check R against stata
+  
+  insheet using "~/projects/Vally2012-RossRiverRates/data/rrv_bunbury_urban_rural_combined.csv"   
+  gen log1pop = log(1+pops)
+  
+  poisson cases i.urban##c.buffer, offset(log1pop) 
+  
+  meglm cases buffer , offset(log1pop) || urban:, family(poisson) link(log)
+  
+  /*
+  Mixed-effects GLM                               Number of obs      =        30
+  Family:                 Poisson
+  Link:                       log
+  Group variable:           urban                 Number of groups   =         2
+  
+                                                  Obs per group: min =        15
+                                                                 avg =      15.0
+                                                                 max =        15
+  
+  Integration method: mvaghermite                 Integration points =         7
+  
+                                                  Wald chi2(1)       =      4.52
+  Log likelihood = -59.630055                     Prob > chi2        =    0.0335
+  ------------------------------------------------------------------------------
+         cases |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+  -------------+----------------------------------------------------------------
+        buffer |  -.0662473   .0311622    -2.13   0.034    -.1273242   -.0051705
+         _cons |  -5.047999   .1239276   -40.73   0.000    -5.290893   -4.805105
+       log1pop |          1  (offset)
+  -------------+----------------------------------------------------------------
+  urban        |
+     var(_cons)|   1.35e-32   2.47e-17                             .           .
+  ------------------------------------------------------------------------------
+  LR test vs. Poisson regression:      chi2(0) =     0.00   Prob > chi2 =      .
+  
+  Note: LR test is conservative and provided only for reference.
+  
+  
+  
+  
+  same as in R
+  # Adding fixed-effects predictors
+  # Predict cases from distance buffer
+  Norm2 <-glmer(cases ~ buffer + (1|urban),
+               data=dat2,
+               family = 'poisson',
+               offset = log(1+pops)
+               )
+  
+  summary(Norm2)
+  
+  Generalized linear mixed model fit by maximum likelihood (Laplace Approximation) ['glmerMod']
+   Family: poisson  ( log )
+  Formula: cases ~ buffer + (1 | urban)
+     Data: dat2
+   Offset: log(1 + pops)
+  
+       AIC      BIC   logLik deviance df.resid 
+     125.3    129.5    -59.6    119.3       27 
+  
+  Scaled residuals: 
+      Min      1Q  Median      3Q     Max 
+  -1.5901 -0.8978 -0.4232  0.4132  2.2455 
+  
+  Random effects:
+   Groups Name        Variance Std.Dev.
+   urban  (Intercept) 0        0       
+  Number of obs: 30, groups:  urban, 2
+  
+  Fixed effects:
+              Estimate Std. Error z value Pr(>|z|)    
+  (Intercept) -5.04800    0.12393  -40.73   <2e-16 ***
+  buffer      -0.06625    0.03116   -2.13   0.0335 *  
+  ---
+  Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+  
+  Correlation of Fixed Effects:
+         (Intr)
+  buffer -0.827
+  ,*/
+#+end_src
 * report.Rmd
 #+name:main
 #+begin_src R :session *R* :tangle main.Rmd :exports none :eval no :padline no
