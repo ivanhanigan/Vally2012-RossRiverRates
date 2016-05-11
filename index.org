@@ -20,6 +20,7 @@
 - combined data lets you use the AIC for model selection though
 ** 2016-05-08 notes from ivan re using multilevel models
 - can use lme4 in do models check
+- checked with stata too
 * workflow
 ** COMMENT test-newnode
 
@@ -870,6 +871,11 @@ dev.off()
   
 #+end_src
 
+** model checking = do_model_checking.R
+#+name:do_model_checking
+#+begin_src R :session *R* :tangle code/do_model_checking.R :exports none :eval no
+
+#+end_src
 ** COMMENT do_stata
 #+begin_src stata :session *shell* :tangle code/compare_stata.do :exports none :eval no :padline no
   // do check R against stata
